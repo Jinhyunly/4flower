@@ -54,7 +54,13 @@ public class UserController {
         if (userExists != null) {
             bindingResult
                 .rejectValue("loginId", "error.loginId",
-                    "There is already a user registered with the loginId provided");
+                    "There is already a user registered with the loginId provided.");
+        }
+
+        if(!user.getPassword().equals(user.getPasswordConfirm())) {
+        	bindingResult
+          .rejectValue("loginId", "error.loginId",
+              "Please reconfirm your password.");
         }
 
         if (bindingResult.hasErrors()) {

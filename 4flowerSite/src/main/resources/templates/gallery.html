@@ -90,6 +90,7 @@
 		  </div>
 		</header>
 		<!-- END: header -->
+		<!--
 		<div id="fh5co-intro-section" class="section-overlay animate-box" data-animate-effect="fadeIn">
 			<div class="fh5co-intro-cover text-center" data-stellar-background-ratio="0.5" style="background-image: url(/images/intro.jpg);">
 				<div class="container">
@@ -102,69 +103,80 @@
 				</div>
 			</div>
 		</div>
+		 -->
 		<!-- END fh5co-intro-section -->
-		<div id="fh5co-section">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-10 col-md-offset-1">
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-heart"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-laptop"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-video"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-mobile"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-gears"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box">
-							<div class="fh5co-inner fh5co-services">
-								<i class="icon-piechart"></i>
-								<div class="holder-section">
-									<h3>製作中</h3>
-									<p>...</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+
+<!-- Gallery -->
+<div class="container">
+
+  <h1 class="fw-light text-center text-lg-start mt-4 mb-0">4flower Gallery</h1>
+
+  <hr class="mt-2 mb-5">
+
+  <div class="row text-center text-lg-start">
+
+    <div th:each="file:${fileList}" class="col-lg-3 col-md-4 col-6 ">
+    	<a th:href="@{'/gallery/'+${file.gallery_id}}" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" th:src="@{'/static/gallery/'+${file.gallery_fileName}}" alt="">
+      </a>
+      <!--${file.gallery_url}  -->
+    </div>
+    <!--
+    <div class="col-lg-3 col-md-4 col-6">
+      <a href="#" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/aob0ukAYfuI/400x300" alt="">
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-6">
+      <a href="#" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/EUfxH-pze7s/400x300" alt="">
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-6">
+      <a href="#" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/M185_qYH8vg/400x300" alt="">
+      </a>
+    </div>
+    <div class="col-lg-3 col-md-4 col-6">
+      <a href="#" class="d-block mb-4 h-100">
+        <img class="img-fluid img-thumbnail" src="https://source.unsplash.com/sesveuG_rNo/400x300" alt="">
+      </a>
+    </div>
+     -->
+  </div>
+  <div class="row">
+  <br/>
+ 		<form th:if="${userId != null}" method="post" action="/gallery/fileinsert" enctype="multipart/form-data">
+ 		<!-- <form action="/gallery/fileinsert" method="post"> -->
+	  <div class="container ">
+
+
+			  <div class="form-group">
+			    <label for="inputText">Title</label>
+			    <input type="text" class="form-control" name="galleryTitle" id="galleryTitle" placeholder="Title" required>
+			  </div>
+
+			  <div class="form-group">
+			    <label for="inputFile">File input</label>
+	<!-- 		    <input type="file" class="form-control-file" id="inputFile"> -->
+		  		<input type="file" class="form-control-file" name="file" id="file" required>
+			  </div>
+
+
+	  		<br/>
+	  		<div class="text-center">
+				<button type="submit" class="btn btn-primary ">UPLOAD</button>
+	  		</div>
+	  </div>
+		</form>
+  <div>
+
+</div>
+<!-- Gallery -->
+
+
+</div>
+<!-- Gallery -->
 		<footer th:replace="fragments/footer :: footerFragment"></footer>
 	</div>
 	<!-- END: box-wrap -->

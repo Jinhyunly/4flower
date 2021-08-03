@@ -11,7 +11,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.domain.user.UserPrincipal;
 import com.example.demo.entity.file.Files;
+import com.example.demo.ftp.SftpTransfer;
+import com.example.demo.security.UserInfo;
+import com.example.demo.security.service.MyUserDetails;
 import com.example.demo.service.file.FilesService;
 
 
@@ -34,27 +35,22 @@ public class GalleryController {
   private FilesService fileService;
 
 	@RequestMapping(value = "/gallery")
-	public ModelAndView gallery() {
+	public ModelAndView gallery(Principal principal) {
 
 		ModelAndView modelAndView = new ModelAndView();
 
 		try{
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-			System.out.println(userPrincipal.toString());
+			Authentication authentication = (Authentication) principal;
+			MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+			UserInfo userInfo = userDetails.getUserInfo();
+			modelAndView.addObject("userName", userInfo.getUserName());
 
-			//modelAndView.addObject("userName", "Welcome " + userPrincipal.getName() + " (" + userPrincipal.getId() + ")");
-			modelAndView.addObject("userName", userPrincipal.getName());
-
-			String tes2 = userPrincipal.getId();
 			//관리자 id를 일단 momo라고 했다
-			if("momo".equals(userPrincipal.getId())){
-				modelAndView.addObject("userId", userPrincipal.getId());
+			if("momo".equals(userInfo.getLoginId())){
+				modelAndView.addObject("userId", userInfo.getLoginId());
 			}
 
-			modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-
-
+			//modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
 
 		}catch(Exception e) {
 
@@ -70,19 +66,19 @@ public class GalleryController {
 	}
 
 	@GetMapping("/gallery/{id}")
-	public ModelAndView galleryInsert(@PathVariable("id") Long id, HttpServletRequest request,Principal principal) throws Exception{
+	public ModelAndView galleryInsert(@PathVariable("id") String id, HttpServletRequest request,Principal principal) throws Exception{
 		Files file = fileService.getFileById(id);
 		ModelAndView modelAndView = new ModelAndView();
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		try{
-			UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-			System.out.println(userPrincipal.toString());
+			Authentication authentication = (Authentication) principal;
+			MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+			UserInfo userInfo = userDetails.getUserInfo();
+			modelAndView.addObject("userName", userInfo.getUserName());
 
-			if("momo".equals(userPrincipal.getId())){
-				modelAndView.addObject("userId", userPrincipal.getId());
+			if("momo".equals(userInfo.getLoginId())){
+				modelAndView.addObject("userId", userInfo.getLoginId());
 			}
-
 		}catch(Exception e){
 
 		}
@@ -93,6 +89,7 @@ public class GalleryController {
 		return modelAndView;
 
 	}
+
 	//https://stackoverflow.com/questions/24256051/delete-or-put-methods-in-thymeleaf
 	//@DeleteMapping("/gallery/{id}")
 //	@RequestMapping(value="/gallery/{id}", method=RequestMethod.DELETE)
@@ -113,17 +110,13 @@ public class GalleryController {
 //	}
 
 	@PostMapping("/gallery/{id}")
-	public ModelAndView galleryPost(@PathVariable("id") Long id, HttpServletRequest request,Principal principal) throws Exception{
+	public ModelAndView galleryPost(@PathVariable("id") String id, HttpServletRequest request, Principal principal) throws Exception{
 		String method = request.getParameter("method");
 
 		ModelAndView modelAndView = new ModelAndView();
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
 		if("delete".equals(method)) {
-
-			Files fileObj = new Files();
-
 			Files file = fileService.getFileById(id);
-
 			String sourceFileName = file.getGallery_fileName();
 //			String sourceFileNameExtension = FilenameUtils.getExtension(sourceFileName).toLowerCase();
 
@@ -136,23 +129,23 @@ public class GalleryController {
 
 				destinationFile.delete();
 
-				UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-				System.out.println(userPrincipal.toString());
+				Authentication authentication = (Authentication) principal;
+				MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+				UserInfo userInfo = userDetails.getUserInfo();
+				modelAndView.addObject("userName", userInfo.getUserName());
 
-				if("momo".equals(userPrincipal.getId())){
-					modelAndView.addObject("userId", userPrincipal.getId());
+				if("momo".equals(userInfo.getLoginId())){
+					modelAndView.addObject("userId", userInfo.getLoginId());
 				}
 
 			}catch(Exception ex) {
 
 			}
 
-
 			fileService.deleteFileById(id);
 		}
 
 		List<Files> fileList =  fileService.selectAll();
-
 
 		modelAndView.addObject("fileList", fileList);
     modelAndView.setViewName("gallery");
@@ -164,13 +157,9 @@ public class GalleryController {
 
 	@ResponseBody
 	@RequestMapping(value="/gallery/fileinsert")
-	public ModelAndView galleryFileinsert(HttpServletRequest request, @RequestParam(name = "file") MultipartFile file) throws Exception {
+	public ModelAndView galleryFileinsert(HttpServletRequest request, @RequestParam(name = "file") MultipartFile file, Principal principal) throws Exception {
 
 		String galleryTitle = request.getParameter("galleryTitle");
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-		System.out.println(userPrincipal.toString());
 
 
 
@@ -183,20 +172,30 @@ public class GalleryController {
 
 		//C:\dev\eclipse\git\4flower_git\4flower_git\4flowerSite\bin\main\static\gallery
 		String path = new ClassPathResource("/static/gallery").getFile().getAbsolutePath();
-		String fileUrl = path +"\\";
+
+		//String fileUrl = path +"\\";
+		String fileUrl = path +"/";
 
 		do {
     			destinationFileName = RandomStringUtils.randomAlphanumeric(32) + "." + sourceFileNameExtension;
     			destinationFile = new File(fileUrl + destinationFileName);
 		} while (destinationFile.exists());
 
-		destinationFile.getParentFile().mkdirs();
-		file.transferTo(destinationFile);
+
+		//local install
+//		destinationFile.getParentFile().mkdirs();
+//		file.transferTo(destinationFile);
+
+
+		//war배포 remote install
+		SftpTransfer sftp = new SftpTransfer();
+		sftp.transferLocalFileToRemoteHost(file, destinationFileName);
+
 
 		fileObj.setGallery_fileName(destinationFileName);
 		fileObj.setGallery_fileOriName(sourceFileName);
-		//fileObj.setGallery_url(fileUrl);
-		fileObj.setGallery_url("/static/gallery");
+		fileObj.setGallery_url(fileUrl + destinationFileName);
+		//fileObj.setGallery_url("/static/gallery");
 		fileObj.setGallery_title(galleryTitle);
 		fileObj.setEnt_kbn("1");
 
@@ -206,17 +205,19 @@ public class GalleryController {
 
 		ModelAndView modelAndView = new ModelAndView();
 
-		if("momo".equals(userPrincipal.getId())){
-			modelAndView.addObject("userId", userPrincipal.getId());
+		Authentication authentication = (Authentication) principal;
+		MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
+		UserInfo userInfo = userDetails.getUserInfo();
+		modelAndView.addObject("userName", userInfo.getUserName());
+
+		if("momo".equals(userInfo.getLoginId())){
+			modelAndView.addObject("userId", userInfo.getLoginId());
 		}
 
 		modelAndView.addObject("fileList", fileList);
     modelAndView.setViewName("gallery");
 
 		return modelAndView;
-//		String abt = "";
-//
-//		return abt;
 
 	}
 

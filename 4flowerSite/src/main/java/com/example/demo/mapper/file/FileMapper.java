@@ -11,8 +11,8 @@ import com.example.demo.entity.file.Files;
 @Component
 @Mapper
 public interface FileMapper {
-	Files findByGalleryId(@Param("galleryId") Long galleryId);
+	Files findByGalleryId(@Param("galleryId") String galleryId);
 	int insertFile(@Param("param") Files param);
 	List<Files> selectAll();
-	int deleteByGalleryId(@Param("galleryId") Long galleryId);
+	int deleteByGalleryId(@Param("galleryId") String galleryId);
 }

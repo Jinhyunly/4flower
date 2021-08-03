@@ -25,7 +25,7 @@ public class FilesService {
 		//filesRepository.save(file);
 	}
 
-	public Files getFileById(Long galleryId) {
+	public Files getFileById(String galleryId) {
 		return fileMapper.findByGalleryId(galleryId);
 	}
 
@@ -37,7 +37,7 @@ public class FilesService {
 		return fileMapper.selectAll();
 	}
 
-	public void deleteFileById(Long galleryId) {
+	public void deleteFileById(String galleryId) {
 		 fileMapper.deleteByGalleryId(galleryId);
 	}
 }

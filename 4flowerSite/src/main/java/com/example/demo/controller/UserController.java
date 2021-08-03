@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.domain.user.UserPrincipal;
 import com.example.demo.entity.user.User;
 import com.example.demo.service.user.UserService;
 @Controller
@@ -22,15 +19,34 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = {"login"})
-    public ModelAndView getLoginPage() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        return modelAndView;
+    @GetMapping("/login")
+    public ModelAndView getLoginPage(HttpServletRequest request) {
+
+    	ModelAndView modelAndView = new ModelAndView();
+  		String sessionFlg = request.getParameter("sessionOut");
+  		String sessionMessage = "";
+
+  		if (sessionFlg != null && !sessionFlg.isEmpty()) {
+  			sessionMessage = "The session has ended, so please log in again.";
+        modelAndView.addObject("sessiontMessage", sessionMessage);
+      }
+
+  		String errorFlg = request.getParameter("error");
+  		String loginErrMessage = "";
+
+  		if (errorFlg != null && !errorFlg.isEmpty()) {
+  			loginErrMessage = "ID password is invalid or disabled.";
+        modelAndView.addObject("loginErrMessage", loginErrMessage);
+      }
+
+      modelAndView.setViewName("login");
+      return modelAndView;
     }
 
     @RequestMapping(value = "logout")
     public ModelAndView getLogoutPage() {
+
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/");
         return modelAndView;
@@ -75,30 +91,30 @@ public class UserController {
         return modelAndView;
     }
 
-    @GetMapping("home")
-    public ModelAndView home(HttpSession session){
-        ModelAndView modelAndView = new ModelAndView();
+//    @GetMapping("home")
+//    public ModelAndView home(HttpSession session){
+//        ModelAndView modelAndView = new ModelAndView();
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+//        System.out.println(userPrincipal.toString());
+//
+//        session.setAttribute("userPrincipal", userPrincipal);
+//
+//        //modelAndView.addObject("userName", "Welcome " + userPrincipal.getName() + " (" + userPrincipal.getId() + ")");
+//        modelAndView.addObject("userName", userPrincipal.getName());
+//        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
+//        //modelAndView.setViewName("home");
+//        modelAndView.setViewName("index");
+//        return modelAndView;
+//    }
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-        System.out.println(userPrincipal.toString());
-
-        session.setAttribute("userPrincipal", userPrincipal);
-
-        //modelAndView.addObject("userName", "Welcome " + userPrincipal.getName() + " (" + userPrincipal.getId() + ")");
-        modelAndView.addObject("userName", userPrincipal.getName());
-        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-        //modelAndView.setViewName("home");
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }
-
-    @GetMapping("exception")
-    public ModelAndView getUserPermissionExceptionPage() {
-        ModelAndView mv = new ModelAndView();
-
-        mv.setViewName("access-denied");
-        return mv;
-    }
+//    @GetMapping("exception")
+//    public ModelAndView getUserPermissionExceptionPage() {
+//        ModelAndView mv = new ModelAndView();
+//
+//        mv.setViewName("access-denied");
+//        return mv;
+//    }
 
 }

@@ -1,10 +1,9 @@
 package com.example.demo.domain.user;
 
-import org.springframework.security.core.GrantedAuthority;
-
-public class UserGrant implements GrantedAuthority{
-	@Override
-  public String getAuthority() {
-      return "ADMIN";
-  }
+//public class UserGrant implements GrantedAuthority{
+public class UserGrant {
+//	@Override
+//  public String getAuthority() {
+//      return "ADMIN";
+//  }
 }

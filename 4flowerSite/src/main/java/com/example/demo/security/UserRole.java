@@ -1,4 +1,4 @@
-package com.example.demo.entity.user;
+package com.example.demo.security;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRole {
-//	private int userId;
-//	private int roleId;
+	private String userId;
+	private String role;
 }

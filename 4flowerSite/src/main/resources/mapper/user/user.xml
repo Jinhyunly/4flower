@@ -12,7 +12,31 @@
         <result property="password" column="password" />
     </resultMap>
 
+    <resultMap id="UserInfo" type="com.example.demo.security.UserInfo">
+        <result property="id" column="user_id" />
+        <result property="active" column="active" />
+        <result property="loginId" column="login_id" />
+        <result property="userName" column="user_name" />
+        <result property="password" column="password" />
+    </resultMap>
+
     <select id="findUserByLoginId" resultMap="User">
+        SELECT
+            user_id, active, login_id, user_name, password
+        FROM
+            user
+
+        <where>
+
+            <if test=" loginId != null and loginId != '' ">
+                AND login_id = #{loginId}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="findUserByLoginId2" resultMap="UserInfo">
         SELECT
             user_id, active, login_id, user_name, password
         FROM

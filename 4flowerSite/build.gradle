@@ -13,6 +13,12 @@ repositories {
 	mavenCentral()
 }
 
+configurations { /*logback 의존성 제거*/
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -34,6 +40,12 @@ dependencies {
 	//file
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+
+	//ftp
+	implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+
+	//log4j
+	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 }
 
 test {

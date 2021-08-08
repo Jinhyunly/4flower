@@ -20,8 +20,11 @@ configurations { /*logback 의존성 제거*/
 }
 
 dependencies {
+	//implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	compileOnly 'org.projectlombok:lombok'
 	// mybatis
   implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1'
@@ -45,7 +48,9 @@ dependencies {
 	implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
 
 	//log4j
-	implementation("org.springframework.boot:spring-boot-starter-log4j2")
+	//implementation("org.springframework.boot:spring-boot-starter-log4j2")
+	//compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16' /* Log4JDBC */
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 }
 
 test {
